@@ -1,0 +1,12 @@
+{
+  "name": "ai-backend",
+  "version": "1.0.0",
+  "description": "basic ai",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["javascript", "typescript", "nodejs", "backend"],
+  "author": "Amit Jalui",
+  "license": "ISC"
+}
