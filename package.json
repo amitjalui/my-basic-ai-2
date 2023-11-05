@@ -4,9 +4,28 @@
   "description": "basic ai",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc --noEmitOnError",
+    "dev": "nodemon ./dist/index.js",
+    "dev:ts": "nodemon --exec ts-node ./src/index.ts"
   },
-  "keywords": ["javascript", "typescript", "nodejs", "backend"],
+  "keywords": [
+    "javascript",
+    "typescript",
+    "nodejs",
+    "backend"
+  ],
   "author": "Amit Jalui",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^8.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.20",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
 }
