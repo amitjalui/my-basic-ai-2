@@ -1,39 +1,65 @@
 // Import the fs module for file operations
 import * as fs from 'fs';
+import { predictWordVector, updateWordVectors } from '../utils/wordVectorUtils';
 
 // Preprocess the text data
-const text = "This is an example of some text data for training a word2vec model.";
-const tokens = text.toLowerCase().split(' ');
+const sentence = "example of word2vec model.";
 
-// Create a co-occurrence matrix
-const windowSize = 2; // Size of the context window for word pairs
+// Tokenize the sentence
+const tokens = sentence.toLowerCase().split(' ');
+
+// Create the co-occurrence matrix
+const windowSize = 2;
+
+/*
+  coOccurrenceMatrix = {
+    example: { of: 1, word2vec: 1 },
+    of: { example: 1, word2vec: 1, 'model.': 1 },
+    word2vec: { example: 1, of: 1, 'model.': 1 },
+    'model.': { of: 1, word2vec: 1 }
+  }
+*/
 const coOccurrenceMatrix: { [word: string]: { [contextWord: string]: number } } = {};
 
 for (let i = 0; i < tokens.length; i++) {
   const word = tokens[i];
 
   for (let j = Math.max(0, i - windowSize); j <= Math.min(tokens.length - 1, i + windowSize); j++) {
-    if (i === j) continue; // Skip the same word pair
+    if (i === j) continue;
 
     const contextWord = tokens[j];
-
+    
+    /*
+      !example = {} 
+    */
     if (!coOccurrenceMatrix[word]) {
+      /*
+        example = {} 
+      */
       coOccurrenceMatrix[word] = {};
     }
 
+    /*
+      word        contextWord
+      example = { of: 1, word2vec: 1} 
+      
+      * if coOccurrenceMatrix[word][contextWord] is falsy, such as undefined), the expression evaluates to undefined.
+      * 0: This is the logical OR operator. If the left operand is falsy, it returns the right operand. In this case, if coOccurrenceMatrix[word][contextWord] is falsy (undefined, null, 0, etc.), it defaults to 0.
+    */
     coOccurrenceMatrix[word][contextWord] = (coOccurrenceMatrix[word][contextWord] || 0) + 1;
   }
 }
 
+
 // Apply dimensionality reduction (simplified approach)
-const numDimensions = 5; // Number of reduced dimensions
+const numDimensions = 100;
 const wordVectors: { [word: string]: number[] } = {};
 
 for (const word in coOccurrenceMatrix) {
   const wordVector = [];
 
   for (let i = 0; i < numDimensions; i++) {
-    wordVector.push(Math.random() * 2 - 1); // Initialize random vector components
+    wordVector.push(Math.random() * 2 - 1);
   }
 
   wordVectors[word] = wordVector;
@@ -57,6 +83,11 @@ for (let iteration = 0; iteration < numIterations; iteration++) {
   }
 }
 
+// Print the word vectors for the sentence
+for (const word of tokens) {
+  console.log(`"${word}": ${wordVectors[word]}`);
+}
+
 // Save the trained model (simplified approach)
 const saveWordVectorsToFile = (fileName: string) => {
   const json = JSON.stringify(wordVectors);
@@ -64,38 +95,3 @@ const saveWordVectorsToFile = (fileName: string) => {
 };
 
 saveWordVectorsToFile('word_vectors.json');
-
-function predictWordVector(cooccurrenceCount: number, wordVector: number[], contextWordVector: number[]): number {
-  const predictedVector = wordVector.slice(); // Copy the current word vector
-
-  // Calculate the dot product between the context word vector and the predicted word vector
-  const dotProduct = predictedVector.reduce((acc, component1, i) => {
-    return acc + component1 * contextWordVector[i];
-  }, 0);
-
-  // Scale the predicted vector based on the cooccurrence count
-  for (let i = 0; i < predictedVector.length; i++) {
-    predictedVector[i] *= cooccurrenceCount;
-  }
-
-  // Calculate the error between the predicted vector and the actual word vector
-  const error = predictedVector.reduce((acc, component1, i) => {
-    return acc + (component1 - contextWordVector[i]) ** 2;
-  }, 0);
-
-  return error;
-}
-
-function updateWordVectors(wordVector: number[], contextWordVector: number[], error: number, learningRate: number): void {
-  // Calculate the gradient of the error with respect to the word vector
-  const gradient = wordVector.map((component1, i) => {
-    return (component1 - contextWordVector[i]) * learningRate;
-  });
-
-  // Update the word vector
-  for (let i = 0; i < wordVector.length; i++) {
-    wordVector[i] -= gradient[i];
-  }
-}
-
-export { predictWordVector, updateWordVectors }
