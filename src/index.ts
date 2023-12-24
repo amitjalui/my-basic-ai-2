@@ -7,9 +7,9 @@ dotenv.config();
 // Start the server
 const port = process.env.PORT || 8000;
 
-app.listen(port, () =>{
+app.listen(port, () => {
   console.log("Server listening", port);
 })
 
 // 
-// connectDB();
+connectDB();

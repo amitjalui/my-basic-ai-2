@@ -1,0 +1,89 @@
+const windowSize = 2; // minimum windowSize
+
+const sentence = "example of word2vec model.";
+const tokens = sentence.toLowerCase().split(' ');
+tokens.length - 1  // 3
+
+// MAIN LOOP 0
+i = 0; word = example
+.
+j = Math.max(0, i - windowSize); j <= Math.min(tokens.length - 1, i + windowSize); j++
+j = Math.max(0, 0 - 2); j <= Math.min(3, 0 + 2); j++
+j = Math.max(0, -2); j <= Math.min(3, 2); j++
+
+j = 0; j <= 2; j++     // <---- assigned J loop 2
+  i:0           j:2
+"example of word2vec model."
+    ^
+.
+j = 0; 1 <= 2     // <---- J loop 1 = j[1] = of
+contextWord = of
+j = 0; 2 <= 2     // <---- J loop 2 = j[2] = word2vec
+contextWord = word2vec
+
+
+// MAIN LOOP 1
+i = 1; word = of
+.
+j = Math.max(0, i - windowSize); j <= Math.min(tokens.length - 1, i + windowSize); j++
+j = Math.max(0, 1 - 2); j <= Math.min(3, 1 + 2); j++
+j = Math.max(0, -1); j <= Math.min(3, 3); j++
+.
+j = 0; j <= 3; j++     // <---- assigned J loop 3
+        i:1           j:3
+"example of word2vec model."
+         ^
+.
+j = 0; 0 <= 3
+contextWord = example
+j = 0; 1 <= 3    // i:1 === j:1
+j = 0; 2 <= 3
+contextWord = word2vec
+j = 0; 3 <= 3
+contextWord = model.
+
+
+// MAIN LOOP 2
+i = 2; word = word2vec
+.
+j = Math.max(0, i - windowSize); j <= Math.min(tokens.length - 1, i + windowSize); j++
+j = Math.max(0, 2 - 2); j <= Math.min(3, 3 + 2); j++
+j = Math.max(0, 0); j <= Math.min(3, 5); j++
+.
+j = 0; j <= 3; j++     // <---- assigned J loop 3
+              i:2     j:3
+"example of word2vec model."
+               ^
+.
+j = 0; 0 <= 3 
+example
+j = 0; 1 <= 3
+of
+j = 0; 2 <= 3   // i:2 === j:2
+j = 0; 3 <= 3
+model.
+
+
+// MAIN LOOP 3
+i = 3; word = model.
+
+j = 1; 1 <= 3
+of
+j = 1; 2 <= 3
+word2vec
+j = 1; 3 <= 3
+
+
+EXAMPLE: 
+2 each side 
+
+[word1, word2] currentWord [word1, word2]
+
+example [of, word2vec] model.
+  ^
+[example] of [word2vec, model.]
+          ^
+[example, of] word2vec [model.]
+                ^
+example [of, word2vec] model.
+                        ^
