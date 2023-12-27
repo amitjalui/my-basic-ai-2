@@ -1,12 +1,16 @@
 // Import the fs module for file operations
 import * as fs from 'fs';
 import { predictWordVector, updateWordVectors } from '../utils/wordVectorUtils';
+import { getNegativeSamples } from './getNegativeSamples';
 
 // Preprocess the text data
 const sentence = "example of word2vec model.";
 
 // Tokenize the sentence
 const tokens = sentence.toLowerCase().split(' ');
+
+const vocabulary = new Set(tokens); // Create a unique set of word
+const vocabularyArray: string[] = Array.from(vocabulary);
 
 // Create the co-occurrence matrix
 const windowSize = 2;
@@ -69,6 +73,9 @@ for (const word in coOccurrenceMatrix) {
 const learningRate = 0.01; // Learning rate for updating word vectors
 const numIterations = 1000; // Number of training iterations
 
+const numNegativeSamples = 5; // Set the desired number of negative samples
+
+// Update training loop to include negative samples
 for (let iteration = 0; iteration < numIterations; iteration++) {
   for (const word in coOccurrenceMatrix) {
     const contextWords = Object.keys(coOccurrenceMatrix[word]);
@@ -77,15 +84,24 @@ for (let iteration = 0; iteration < numIterations; iteration++) {
       const wordVector = wordVectors[word];
       const contextWordVector = wordVectors[contextWord];
 
+      // Train with poitive pair
       const error = predictWordVector(coOccurrenceMatrix[word][contextWord], wordVector, contextWordVector);
       updateWordVectors(wordVector, contextWordVector, error, learningRate);
+
+      // Train with negative pair
+      const negativeSamples = getNegativeSamples(contextWord, vocabularyArray, numNegativeSamples);
+      for (const negativeSample of negativeSamples) {
+        const negativeSampleVector = wordVectors[negativeSample];
+        const negativeError = predictWordVector(0, wordVector, negativeSampleVector); // Expected co-occurrence is 0
+        updateWordVectors(wordVector, negativeSampleVector, negativeError, learningRate);
+      }
     }
   }
 }
 
 // Print the word vectors for the sentence
 for (const word of tokens) {
-  console.log(`"${word}": ${wordVectors[word]}`);
+  // console.log(`"${word}": ${wordVectors[word]}`);
 }
 
 // Save the trained model (simplified approach)

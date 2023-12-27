@@ -12,7 +12,9 @@ function getNegativeSamples(word: string, vocabulary: string[], numNegativeSampl
       negativeSamples.push(randomWord);
     }
   }
+  console.log("negativeSamples", negativeSamples);
+  
   return negativeSamples;
 }
 
-// Update training loop to include negative samples
+export { getNegativeSamples }
